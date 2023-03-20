@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  stats:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_NODE_TYPE=stats
+      - RABBITMQ_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    volumes:
+      - 'rabbitmqstats_data:/rabbitmq:3-management/mnesia'
+  queue-disc1:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@queue-disc1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    volumes:
+      - 'rabbitmqdisc1_data:/rabbitmq:3-management/mnesia'
+  queue-ram1:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-ram
+      - RABBITMQ_NODE_NAME=rabbit@queue-ram1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    volumes:
+      - 'rabbitmqram1_data:/rabbitmq:3-management/mnesia'
+
+volumes:
+  rabbitmqstats_data:
+    driver: local
+  rabbitmqdisc1_data:
+    driver: local
+  rabbitmqram1_data:
+    driver: local
